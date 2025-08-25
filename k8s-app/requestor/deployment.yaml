@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: requestor
+  namespace: java-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: requestor
+  template:
+    metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: otel/splunk-otel-collector
+      labels:
+        app: requestor
+    spec:
+      containers:
+        - name: requestor
+          image: melcisco/requestor:1.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SUM_SERVICE_URL
+              value: "http://responder:8081/sum"
+            - name: ERROR_SERVICE_URL
+              value: "http://responder:8081/always-error"
+            # - name: OTEL_EXPORTER_OTLP_PROTOCOL
+            #   value: "grpc"
+            # - name: SPLUNK_PROFILER_OTLP_PROTOCOL
+            #   value: "grpc"
+            # - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            #   value: "splunk-otel-collector-agent.otel.svc.cluster.local:4317"
+            - name: OTEL_LOGS_EXPORTER
+              value: "none"

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: responder
+  namespace: java-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: responder
+  template:
+    metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: otel/splunk-otel-collector
+      labels:
+        app: responder
+    spec:
+      containers:
+        - name: responder
+          image: melcisco/responder:1.0
+          ports:
+            - containerPort: 8081
+          env:
+          #   - name: OTEL_EXPORTER_OTLP_PROTOCOL
+          #     value: "grpc"
+          #   - name: SPLUNK_PROFILER_OTLP_PROTOCOL
+          #     value: "grpc"
+          # - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          #   value: "splunk-otel-collector-agent.otel.svc.cluster.local:4317"
+            - name: OTEL_LOGS_EXPORTER
+              value: "none"
