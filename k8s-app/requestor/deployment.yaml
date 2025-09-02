@@ -35,3 +35,5 @@ spec:
               value: "none"
             - name: SPLUNK_METRICS_ENABLED
               value: "true"
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: "deployment.environment=dev"
